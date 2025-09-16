@@ -35,10 +35,32 @@ export interface TimelineEvent extends Event {
   provenance?: Provenance[];
 }
 
+// ✅ All supported source types (keeps code consistent + autocomplete)
+export type SourceType =
+  | "wikipedia"
+  | "facebook"
+  | "youtube"
+  | "linkedin"
+  | "github"
+  | "geeksforgeeks"
+  | "twitter"
+  | "instagram"
+  | "education"
+  | "medium"
+  | "devto"
+  | "stackoverflow"
+  | "quora"
+  | "behance"
+  | "dribbble"
+  | "aboutme";
+
+// ✅ Candidate with source_type + verified
 export interface Candidate {
   name: string;
   descriptor: string;
   source_url: string;
   snippet: string;
   similarity_score: number;
+  verified?: boolean;
+  source_type?: SourceType;
 }
