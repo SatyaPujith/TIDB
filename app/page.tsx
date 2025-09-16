@@ -2,10 +2,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image"; // ✅ for ojo.png import
+import ojoLogo from "./ojo.png"; // ✅ since logo is in same folder
 import { SearchBar } from "@/components/SearchBar";
 import { ProfileCard } from "@/components/ProfileCard";
 import { Profile, Candidate } from "@/types";
-import { Brain, Zap, Globe, Shield } from "lucide-react";
+import { Zap, Globe, Shield } from "lucide-react"; // ❌ Brain removed
 
 type SourceType =
   | "wikipedia"
@@ -107,17 +109,23 @@ export default function HomePage() {
         {/* Header */}
         <header className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center gap-4 mb-4">
+            {/* ✅ ojo logo */}
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Brain className="w-8 h-8 text-white" />
+              <Image
+                src={ojoLogo}
+                alt="Ojo Logo"
+                width={32}
+                height={32}
+                className="rounded"
+              />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
-              BioScopeAgent
+              ojo
             </h1>
           </div>
           <p className="text-center text-gray-400 max-w-2xl mx-auto">
-            Intelligent biography research powered by AI. Search for any public
-            figure and we'll instantly research, analyze, and create a
-            comprehensive profile with verified timeline data.
+            Wikipedia for everyone — Ojo aggregates public signals and displays
+            them as an interactive timeline with exact quoted sources.
           </p>
         </header>
 
