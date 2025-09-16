@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Image from "next/image"; // ✅ for ojo.png import
-import ojoLogo from "./ojo.png"; // ✅ since logo is in same folder
+import ojoLogo from "./ojo.jpg"; // ✅ since logo is in same folder
 import { SearchBar } from "@/components/SearchBar";
 import { ProfileCard } from "@/components/ProfileCard";
 import { Profile, Candidate } from "@/types";
