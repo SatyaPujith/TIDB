@@ -1,3 +1,4 @@
+// File: app/page.tsx
 "use client";
 
 import { useState } from 'react';
@@ -12,6 +13,27 @@ export default function HomePage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [searchMessage, setSearchMessage] = useState<string>('');
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+
+  // Source type styles mapping for cleaner code
+  const sourceStyles: Record<string, string> = {
+    wikipedia: 'bg-blue-600/20 text-blue-400',
+    facebook: 'bg-blue-500/20 text-blue-300',
+    youtube: 'bg-red-600/20 text-red-400',
+    linkedin: 'bg-blue-700/20 text-blue-200',
+    github: 'bg-gray-600/20 text-gray-300',
+    geeksforgeeks: 'bg-green-600/20 text-green-400',
+    twitter: 'bg-sky-500/20 text-sky-300',
+    instagram: 'bg-pink-600/20 text-pink-400',
+    education: 'bg-purple-600/20 text-purple-400',
+    medium: 'bg-green-500/20 text-green-300',
+    devto: 'bg-black/20 text-white',
+    stackoverflow: 'bg-orange-600/20 text-orange-400',
+    quora: 'bg-red-500/20 text-red-300',
+    behance: 'bg-blue-400/20 text-blue-200',
+    dribbble: 'bg-pink-500/20 text-pink-300',
+    aboutme: 'bg-indigo-600/20 text-indigo-400',
+    default: 'bg-gray-600/20 text-gray-400',
+  };
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
@@ -40,7 +62,7 @@ export default function HomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           title: cand.name,
-          source_type: (cand as any).source_type || 'wikipedia'
+          source_type: cand.source_type || 'wikipedia'
         })
       });
       const data = await resp.json();
@@ -98,25 +120,7 @@ export default function HomePage() {
                           <div className="flex items-center gap-3">
                             <h3 className="text-lg font-semibold text-white">{c.name}</h3>
                             <span className="text-xs text-gray-400">Score: {Math.round(c.similarity_score*100)}%</span>
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              c.source_type === 'wikipedia' ? 'bg-blue-600/20 text-blue-400' :
-                              c.source_type === 'facebook' ? 'bg-blue-500/20 text-blue-300' :
-                              c.source_type === 'youtube' ? 'bg-red-600/20 text-red-400' :
-                              c.source_type === 'linkedin' ? 'bg-blue-700/20 text-blue-200' :
-                              c.source_type === 'github' ? 'bg-gray-600/20 text-gray-300' :
-                              c.source_type === 'geeksforgeeks' ? 'bg-green-600/20 text-green-400' :
-                              c.source_type === 'twitter' ? 'bg-sky-500/20 text-sky-300' :
-                              c.source_type === 'instagram' ? 'bg-pink-600/20 text-pink-400' :
-                              c.source_type === 'education' ? 'bg-purple-600/20 text-purple-400' :
-                              c.source_type === 'medium' ? 'bg-green-500/20 text-green-300' :
-                              c.source_type === 'devto' ? 'bg-black/20 text-white' :
-                              c.source_type === 'stackoverflow' ? 'bg-orange-600/20 text-orange-400' :
-                              c.source_type === 'quora' ? 'bg-red-500/20 text-red-300' :
-                              c.source_type === 'behance' ? 'bg-blue-400/20 text-blue-200' :
-                              c.source_type === 'dribbble' ? 'bg-pink-500/20 text-pink-300' :
-                              c.source_type === 'aboutme' ? 'bg-indigo-600/20 text-indigo-400' :
-                              'bg-gray-600/20 text-gray-400'
-                            }`}>
+                            <span className={`px-2 py-1 text-xs rounded-full ${sourceStyles[c.source_type] || sourceStyles.default}`}>
                               {c.source_type}
                             </span>
                             {c.verified && <span className="text-xs text-green-400">✓ Verified</span>}
