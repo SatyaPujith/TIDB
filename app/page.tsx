@@ -1,54 +1,73 @@
 // File: app/page.tsx
 "use client";
 
-import { useState } from 'react';
-import { SearchBar } from '@/components/SearchBar';
-import { ProfileCard } from '@/components/ProfileCard';
-import { Profile, Candidate } from '@/types';
-import { Brain, Zap, Globe, Shield } from 'lucide-react';
+import { useState } from "react";
+import { SearchBar } from "@/components/SearchBar";
+import { ProfileCard } from "@/components/ProfileCard";
+import { Profile, Candidate } from "@/types";
+import { Brain, Zap, Globe, Shield } from "lucide-react";
+
+type SourceType =
+  | "wikipedia"
+  | "facebook"
+  | "youtube"
+  | "linkedin"
+  | "github"
+  | "geeksforgeeks"
+  | "twitter"
+  | "instagram"
+  | "education"
+  | "medium"
+  | "devto"
+  | "stackoverflow"
+  | "quora"
+  | "behance"
+  | "dribbble"
+  | "aboutme"
+  | "default";
 
 export default function HomePage() {
   const [searchResults, setSearchResults] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [searchMessage, setSearchMessage] = useState<string>('');
+  const [searchMessage, setSearchMessage] = useState<string>("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
 
-  // Source type styles mapping for cleaner code
-  const sourceStyles: Record<string, string> = {
-    wikipedia: 'bg-blue-600/20 text-blue-400',
-    facebook: 'bg-blue-500/20 text-blue-300',
-    youtube: 'bg-red-600/20 text-red-400',
-    linkedin: 'bg-blue-700/20 text-blue-200',
-    github: 'bg-gray-600/20 text-gray-300',
-    geeksforgeeks: 'bg-green-600/20 text-green-400',
-    twitter: 'bg-sky-500/20 text-sky-300',
-    instagram: 'bg-pink-600/20 text-pink-400',
-    education: 'bg-purple-600/20 text-purple-400',
-    medium: 'bg-green-500/20 text-green-300',
-    devto: 'bg-black/20 text-white',
-    stackoverflow: 'bg-orange-600/20 text-orange-400',
-    quora: 'bg-red-500/20 text-red-300',
-    behance: 'bg-blue-400/20 text-blue-200',
-    dribbble: 'bg-pink-500/20 text-pink-300',
-    aboutme: 'bg-indigo-600/20 text-indigo-400',
-    default: 'bg-gray-600/20 text-gray-400',
+  // Safe source type styles
+  const sourceStyles: Record<SourceType, string> = {
+    wikipedia: "bg-blue-600/20 text-blue-400",
+    facebook: "bg-blue-500/20 text-blue-300",
+    youtube: "bg-red-600/20 text-red-400",
+    linkedin: "bg-blue-700/20 text-blue-200",
+    github: "bg-gray-600/20 text-gray-300",
+    geeksforgeeks: "bg-green-600/20 text-green-400",
+    twitter: "bg-sky-500/20 text-sky-300",
+    instagram: "bg-pink-600/20 text-pink-400",
+    education: "bg-purple-600/20 text-purple-400",
+    medium: "bg-green-500/20 text-green-300",
+    devto: "bg-black/20 text-white",
+    stackoverflow: "bg-orange-600/20 text-orange-400",
+    quora: "bg-red-500/20 text-red-300",
+    behance: "bg-blue-400/20 text-blue-200",
+    dribbble: "bg-pink-500/20 text-pink-300",
+    aboutme: "bg-indigo-600/20 text-indigo-400",
+    default: "bg-gray-600/20 text-gray-400",
   };
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
-    setSearchMessage('');
+    setSearchMessage("");
     try {
       const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setSearchResults(data.profiles || []);
       setCandidates(data.candidates || []);
-      setSearchMessage(data.message || '');
+      setSearchMessage(data.message || "");
       setHasSearched(true);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
       setSearchResults([]);
-      setSearchMessage('An error occurred while searching. Please try again.');
+      setSearchMessage("An error occurred while searching. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -57,20 +76,20 @@ export default function HomePage() {
   const confirmCandidate = async (cand: Candidate) => {
     try {
       setIsLoading(true);
-      const resp = await fetch('/api/profiles/create-from-wikipedia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+      const resp = await fetch("/api/profiles/create-from-wikipedia", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           title: cand.name,
-          source_type: cand.source_type || 'wikipedia'
-        })
+          source_type: cand.source_type || "wikipedia",
+        }),
       });
       const data = await resp.json();
       if (data?.profile?.id) {
         window.location.href = `/profile/${data.profile.id}`;
       }
     } catch (e) {
-      console.error('Candidate confirmation failed', e);
+      console.error("Candidate confirmation failed", e);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +115,9 @@ export default function HomePage() {
             </h1>
           </div>
           <p className="text-center text-gray-400 max-w-2xl mx-auto">
-            Intelligent biography research powered by AI. Search for any public figure and we'll instantly research, analyze, and create a comprehensive profile with verified timeline data.
+            Intelligent biography research powered by AI. Search for any public
+            figure and we'll instantly research, analyze, and create a
+            comprehensive profile with verified timeline data.
           </p>
         </header>
 
@@ -110,40 +131,66 @@ export default function HomePage() {
           <section className="container mx-auto px-4 pb-12">
             {candidates.length > 0 ? (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-white mb-8">Select a person</h2>
+                <h2 className="text-2xl font-bold text-white mb-8">
+                  Select a person
+                </h2>
                 <div className="grid gap-4">
-                  {candidates.map((c) => (
-                    <div key={c.source_url} className="group relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500" />
-                      <div className="relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex items-start gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-semibold text-white">{c.name}</h3>
-                            <span className="text-xs text-gray-400">Score: {Math.round(c.similarity_score*100)}%</span>
-                            <span className={`px-2 py-1 text-xs rounded-full ${sourceStyles[c.source_type] || sourceStyles.default}`}>
-                              {c.source_type}
-                            </span>
-                            {c.verified && <span className="text-xs text-green-400">✓ Verified</span>}
+                  {candidates.map((c) => {
+                    const safeSource =
+                      (c.source_type as SourceType) ?? "default";
+                    return (
+                      <div key={c.source_url} className="group relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500" />
+                        <div className="relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex items-start gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3">
+                              <h3 className="text-lg font-semibold text-white">
+                                {c.name}
+                              </h3>
+                              <span className="text-xs text-gray-400">
+                                Score: {Math.round(c.similarity_score * 100)}%
+                              </span>
+                              <span
+                                className={`px-2 py-1 text-xs rounded-full ${sourceStyles[safeSource]}`}
+                              >
+                                {c.source_type ?? "unknown"}
+                              </span>
+                              {c.verified && (
+                                <span className="text-xs text-green-400">
+                                  ✓ Verified
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-gray-300 text-sm mt-2 line-clamp-2">
+                              {c.snippet}
+                            </p>
+                            <a
+                              href={c.source_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block"
+                            >
+                              View source
+                            </a>
                           </div>
-                          <p className="text-gray-300 text-sm mt-2 line-clamp-2">{c.snippet}</p>
-                          <a href={c.source_url} target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block">View source</a>
+                          <button
+                            onClick={() => confirmCandidate(c)}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium"
+                            disabled={isLoading}
+                          >
+                            Confirm
+                          </button>
                         </div>
-                        <button
-                          onClick={() => confirmCandidate(c)}
-                          className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium"
-                          disabled={isLoading}
-                        >
-                          Confirm
-                        </button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : searchResults.length > 0 ? (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-white mb-8">
-                  Found {searchResults.length} profile{searchResults.length !== 1 ? 's' : ''}
+                  Found {searchResults.length} profile
+                  {searchResults.length !== 1 ? "s" : ""}
                 </h2>
                 <div className="grid gap-6">
                   {searchResults.map((profile) => (
@@ -156,9 +203,12 @@ export default function HomePage() {
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center mx-auto mb-6">
                   <Globe className="w-12 h-12 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">No profiles found</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No profiles found
+                </h3>
                 <p className="text-gray-400 max-w-md mx-auto">
-                  Try searching for a different public figure or check your spelling.
+                  Try searching for a different public figure or check your
+                  spelling.
                 </p>
               </div>
             )}
@@ -173,18 +223,21 @@ export default function HomePage() {
                 {
                   icon: Zap,
                   title: "AI-Powered Analysis",
-                  description: "Instantly researches any public figure using Gemini AI, creating comprehensive profiles with verified facts and sources."
+                  description:
+                    "Instantly researches any public figure using Gemini AI, creating comprehensive profiles with verified facts and sources.",
                 },
                 {
                   icon: Globe,
                   title: "Dynamic Data Creation",
-                  description: "Automatically fetches and structures biographical data, creating interactive timelines with categorized life events."
+                  description:
+                    "Automatically fetches and structures biographical data, creating interactive timelines with categorized life events.",
                 },
                 {
                   icon: Shield,
                   title: "Vector Search & Storage",
-                  description: "Stores data with vector embeddings in TiDB for semantic search and intelligent event categorization."
-                }
+                  description:
+                    "Stores data with vector embeddings in TiDB for semantic search and intelligent event categorization.",
+                },
               ].map((feature, index) => (
                 <div key={index} className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl group-hover:blur-none transition-all duration-500" />
@@ -192,8 +245,12 @@ export default function HomePage() {
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-6">
                       <feature.icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-4">{feature.title}</h3>
-                    <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                    <h3 className="text-xl font-semibold text-white mb-4">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
               ))}
