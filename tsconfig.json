@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2017",                         // 👈 bump from es5
+    "lib": ["dom", "dom.iterable", "esnext"],   // keep as-is
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "downlevelIteration": true,                 // 👈 add this line
     "plugins": [
       {
         "name": "next"
